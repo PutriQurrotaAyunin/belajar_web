@@ -1,34 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Design - Register</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="main">
-        <div class="navbar">
-            <div class="icon">
-                <h2 class="logo">MyWeb</h2>
-            </div>
-        </div>
+<?php
+// Koneksi ke database
+$conn = new mysqli('localhost', 'root', '', 'myweb_users');
 
-        <div class="content">
-            <h1>Web Design & <br><span>Development</span><br>Learn Time</h1>
-            <p class="par">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+// Cek koneksi
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
 
-            <div class="form">
-                <h2>Register here</h2>
-                <form action="register_process.php" method="POST">
-                    <input type="email" name="email" placeholder="Enter email here" required>
-                    <input type="password" name="password" placeholder="Enter password here" required>
-                    <button class="btnn" type="submit">Register</button>
-                </form>
+// Tangani data dari form
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash password
 
-                <p class="link">Already have an account? <a href="index.php">Login</a> here</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+    // Masukkan data ke tabel users
+    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Registration successful!";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
+    $conn->close();
+}
+?>
